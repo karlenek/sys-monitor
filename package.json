@@ -1,0 +1,23 @@
+{
+  "name": "sys-monitor",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "start": "node ./src",
+    "dev": "nodemon ./src"
+  },
+  "author": "",
+  "license": "MIT",
+  "dependencies": {
+    "axios": "^0.20.0",
+    "convict": "^6.0.0",
+    "mqtt": "^4.2.1",
+    "uuid": "^8.3.0",
+    "winston": "^3.3.3",
+    "ws": "^7.3.1"
+  },
+  "devDependencies": {
+    "nodemon": "^2.0.4"
+  }
+}
