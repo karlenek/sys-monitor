@@ -19,7 +19,7 @@ class HassRestClient extends EventEmitter {
     this._pollInterval = 0;
 
     this._restClient = axios.create({
-      baseURL: `${tls ? 'https' : 'http'}://${host.replace(/\/^/, '')}/api`,
+      baseURL: `${tls ? 'https' : 'http'}://${host.replace(/\/^/, '')}${!token ? '/core' : ''}/api`,
       headers: {
         Authorization: `Bearer ${token || process.env.SUPERVISOR_TOKEN}`,
       },
@@ -84,8 +84,9 @@ class HassRestClient extends EventEmitter {
         } else if (err.response && err.response.status === 401) {
           status = 'Not connected to server, authentication failed';
         } else {
-          status = 'Not connected to server, unknown reason';
-          console.error(err);
+          status = `Not connected to server, ${err.code
+            || (err.response || {}).status
+            || 'unknown reason'}`;
         }
 
         if (this._pollInterval === null) {
