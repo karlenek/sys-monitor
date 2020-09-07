@@ -79,8 +79,6 @@ class HassWsClient extends EventEmitter {
       access_token: `${token || process.env.SUPERVISOR_TOKEN}`,
     }));
 
-    console.log(`${token || process.env.SUPERVISOR_TOKEN}`);
-
     setTimeout(() => {
       if (!this._connected && this._connecting) {
         this._disconnectReason = 'Server never responded to auth request';
@@ -137,7 +135,7 @@ class HassWsClient extends EventEmitter {
     if (token) {
       connectionUrl = `${connectionUrl}/api/websocket`;
     } else {
-      connectionUrl = `${connectionUrl}/core/api/websocket`;
+      connectionUrl = `${connectionUrl}/core/websocket`;
     }
 
     this._client = new WebSocket(connectionUrl);
