@@ -62,7 +62,7 @@ const config = convict({
     },
     host: {
       format: 'String',
-      default: 'http://supervisor/core',
+      default: 'supervisor/core',
       env: 'SYSM_HASS_HOST',
     },
     tls: {
@@ -78,7 +78,7 @@ const config = convict({
     token: {
       format: 'String',
       default: undefined,
-      env: 'SYSM_MQTT_USERNAME',
+      env: 'SYSM_HASS_TOKEN',
     },
   },
   docker: {

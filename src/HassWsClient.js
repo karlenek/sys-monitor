@@ -79,6 +79,8 @@ class HassWsClient extends EventEmitter {
       access_token: `${token || process.env.SUPERVISOR_TOKEN}`,
     }));
 
+    console.log(`${token || process.env.SUPERVISOR_TOKEN}`);
+
     setTimeout(() => {
       if (!this._connected && this._connecting) {
         this._disconnectReason = 'Server never responded to auth request';
