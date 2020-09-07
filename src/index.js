@@ -4,6 +4,7 @@ const logger = require('./logger');
 const { mqttClient, MQTT_STATUS_CHANGED } = require('./MqttClient');
 const { hassRestClient, HASS_REST_STATUS_CHANGED } = require('./HassRestClient');
 const { hassWsClient, HASS_WS_STATUS_CHANGED } = require('./HassWsClient');
+const { dockerClient, DOCKER_STATUS_CHANGED } = require('./DockerClient');
 
 logger.init(config.log);
 
@@ -52,5 +53,19 @@ hassWsClient.on(HASS_WS_STATUS_CHANGED, (newStatus) => {
     log.info('[HASS:WS]: Online');
   } else {
     log.warn(`[HASS:WS]: Offline, ${newStatus.status}`);
+  }
+});
+
+dockerClient.on(DOCKER_STATUS_CHANGED, (newStatus) => {
+  status.docker = newStatus;
+
+  if (newStatus.error) {
+    log.error(newStatus.error);
+  }
+
+  if (newStatus.online) {
+    log.info('[DOCKER]: Online');
+  } else {
+    log.warn(`[DOCKER]: Offline, ${newStatus.status}`);
   }
 });

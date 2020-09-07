@@ -81,6 +81,28 @@ const config = convict({
       env: 'SYSM_MQTT_USERNAME',
     },
   },
+  docker: {
+    enabled: {
+      format: 'Boolean',
+      default: true,
+      env: 'SYSM_DOCKER_ENABLED',
+    },
+    socket: {
+      format: 'String',
+      default: '/var/run/docker.sock',
+      env: 'SYSM_DOCKER_SOCKET',
+    },
+    interval: {
+      format: 'Number',
+      default: 1000,
+      env: 'SYSM_DOCKER_INTERVAL',
+    },
+    containers: {
+      format: 'Array',
+      default: [],
+      env: 'SYSM_DOCKER_CONTAINERS',
+    },
+  },
 });
 
 const configPath = path.join(__dirname, '../', config.get('configPath'));
