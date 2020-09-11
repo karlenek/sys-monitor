@@ -21,6 +21,29 @@ const config = convict({
       env: 'SYSM_LOG_LEVEL',
     },
   },
+  sysmServer: {
+    host: {
+      format: 'String',
+      default: 'localhost:3001',
+      env: 'SYSM_SERVER_HOST',
+    },
+    tls: {
+      format: 'Boolean',
+      default: false,
+      env: 'SYSM_SERVER_TLS',
+    },
+    appId: {
+      format: 'String',
+      default: 'myapp',
+      env: 'SYSM_SERVER_HOST',
+    },
+    token: {
+      format: 'String',
+      default: '',
+      env: 'SYSM_SERVER_TOKEN',
+      sensitive: true,
+    },
+  },
   mqtt: {
     enabled: {
       format: 'Boolean',
