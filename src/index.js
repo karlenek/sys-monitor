@@ -55,7 +55,6 @@ function sendStatus() {
   if (services.length) {
     try {
       wsClient.send('status', { services });
-      log.debug('Sent status to server');
     } catch (err) {
       log.error('Failed to send update to sysm server');
       log.error(err);
