@@ -5,7 +5,6 @@ const { mqttClient, MQTT_STATUS_CHANGED } = require('./MqttClient');
 const { hassRestClient, HASS_REST_STATUS_CHANGED } = require('./HassRestClient');
 const { hassWsClient, HASS_WS_STATUS_CHANGED } = require('./HassWsClient');
 const { dockerClient, DOCKER_STATUS_CHANGED } = require('./DockerClient');
-const { mqtt } = require('./config');
 
 log.init(config.log);
 
@@ -16,63 +15,55 @@ const status = {
   docker: null,
 };
 
-let sendTimer = null;
-
 function sendStatus() {
-  if (sendTimer !== null) {
-    clearTimeout(sendTimer);
+  const services = [];
+
+  if (status.mqtt) {
+    const { mqtt } = status;
+
+    services.push({
+      id: 'mqtt',
+      online: mqtt.online,
+      status: mqtt.status,
+      error: mqtt.error,
+    });
   }
 
-  sendTimer = setTimeout(() => {
-    const services = [];
+  if (status.hassRest && status.hassWs) {
+    const { hassRest, hassWs } = status;
 
-    if (status.mqtt) {
-      const { mqtt } = status;
+    services.push({
+      id: 'hass',
+      online: hassRest.online && hassWs.online,
+      status: !hassRest.online ? hassRest.status : hassWs.status,
+      error: hassRest.error || hassWs.error,
+    });
+  }
 
-      services.push({
-        id: 'mqtt',
-        online: mqtt.online,
-        status: mqtt.status,
-        error: mqtt.error,
-      });
+  if (status.docker) {
+    const { docker } = status;
+
+    services.push({
+      id: 'docker',
+      online: docker.online,
+      status: docker.status,
+      error: docker.error,
+      containers: docker.containers,
+    });
+  }
+
+  if (services.length) {
+    try {
+      wsClient.send('status', { services });
+      log.debug('Sent status to server');
+    } catch (err) {
+      log.error('Failed to send update to sysm server');
+      log.error(err);
     }
-
-    if (status.hassRest && status.hassWs) {
-      const { hassRest, hassWs } = status;
-
-      services.push({
-        id: 'hass',
-        online: hassRest.online && hassWs.online,
-        status: !hassRest.online ? hassRest.status : hassWs.status,
-        error: hassRest.error || hassWs.error,
-      });
-    }
-
-    if (status.docker) {
-      const { docker } = status;
-
-      services.push({
-        id: 'docker',
-        online: docker.online,
-        status: docker.status,
-        error: docker.error,
-        info: {
-          containers: docker.containers,
-        },
-      });
-    }
-
-    if (services.length) {
-      try {
-        wsClient.send('change', { services });
-        log.debug('Sent status change to server');
-      } catch (err) {
-        log.error('Failed to send update to sysm server');
-        log.error(err);
-      }
-    }
-  }, 1000);
+  }
 }
+
+setInterval(sendStatus, config.sysmServer.updateInterval || 2000);
 
 wsClient.on('connected', () => {
   sendStatus();

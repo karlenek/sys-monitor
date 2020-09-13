@@ -43,6 +43,11 @@ const config = convict({
       env: 'SYSM_SERVER_TOKEN',
       sensitive: true,
     },
+    updateInterval: {
+      format: 'Number',
+      default: 2000,
+      env: 'SYSM_SERVER_UPDATE_INTERVAL',
+    },
   },
   mqtt: {
     enabled: {
